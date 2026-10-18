@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090711">
+  <title>Visplay — Your Stories. Your Screen.</title>
+  <style>
+    :root {
+      --bg: #090711;
+      --panel: #151121;
+      --purple: #8b5cf6;
+      --pink: #e040fb;
+      --cyan: #00e5ff;
+      --muted: #aaa3bd;
+      --text: #fff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 15px 5%;
+      background: rgba(9,7,17,.96);
+      border-bottom: 1px solid #292139;
+    }
+    .brand {
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      white-space: nowrap;
+      background: linear-gradient(100deg,var(--cyan),#3766ff,var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .brand span { font-size: 31px; }
+    .search {
+      flex: 1;
+      max-width: 520px;
+      display: flex;
+      border: 1px solid #342947;
+      border-radius: 30px;
+      overflow: hidden;
+      background: #151121;
+    }
+    .search input {
+      width: 100%;
+      min-width: 0;
+      padding: 12px 16px;
+      color: white;
+      background: transparent;
+      border: 0;
+      outline: 0;
+    }
+    .search button, .primary {
+      border: 0;
+      color: white;
+      background: linear-gradient(100deg,#6d28d9,#bd27e8);
+      padding: 11px 17px;
+      font-weight: bold;
+    }
+    .signin {
+      margin-left: auto;
+      border: 1px solid var(--purple);
+      border-radius: 22px;
+      padding: 10px 16px;
+      color: white;
+      background: transparent;
+      white-space: nowrap;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 190px minmax(0,1fr);
+      max-width: 1600px;
+      margin: auto;
+    }
+    aside {
+      padding: 24px 13px;
+      border-right: 1px solid #211a30;
+      min-height: 85vh;
+    }
+    .nav-item {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 5px;
+      text-align: left;
+      color: #d4cde2;
+      background: transparent;
+      border: 0;
+      border-radius: 10px;
+    }
+    .nav-item.active, .nav-item:hover {
+      color: white;
+      background: #28183e;
+    }
+    main { min-width: 0; padding: 25px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 280px;
+      display: flex;
+      align-items: center;
+      border-radius: 20px;
+      padding: 30px;
+      background:
+        radial-gradient(ellipse at 85% 20%,#8b27d9 0,transparent 32%),
+        radial-gradient(ellipse at 70% 100%,#173baf 0,transparent 40%),
+        linear-gradient(115deg,#19102c,#090711 75%);
+      border: 1px solid #35214f;
+    }
+    .hero-content { max-width: 510px; position: relative; z-index: 1; }
+    .eyebrow {
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    h1 { font-size: clamp(32px,5vw,54px); line-height: 1.05; margin: 14px 0; }
+    .gradient-text {
+      background: linear-gradient(90deg,var(--cyan),#bd78ff,var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .description { color: #c5bbd7; line-height: 1.7; font-size: 14px; }
+    .primary { border-radius: 9px; padding: 13px 20px; }
+    .secondary {
+      border: 1px solid #645080;
+      color: white;
+      background: #21172f;
+      padding: 12px 17px;
+      border-radius: 9px;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 30px 0 16px;
+    }
+    h2 { font-size: 20px; margin: 0; }
+    .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
+    .filter {
+      flex-shrink: 0;
+      border: 1px solid #342744;
+      background: #171120;
+      color: #ded5ed;
+      border-radius: 22px;
+      padding: 9px 15px;
+    }
+    .filter.active { background: #7135bd; border-color: #a46aff; color: white; }
+    .movies {
+      display: grid;
+      grid-template-columns: repeat(4,minmax(0,1fr));
+      gap: 18px 13px;
+    }
+    .movie { min-width: 0; cursor: pointer; }
+    .poster {
+      aspect-ratio: 3/4;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      padding: 14px;
+      border-radius: 12px;
+      background: linear-gradient(150deg,#462061,#10102a 55%,#067b9d);
+      transition: transform .2s;
+    }
+    .movie:hover .poster { transform: translateY(-3px); }
+    .poster::before {
+      content: "";
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      top: 10%;
+      right: -40px;
+      border-radius: 50%;
+      background: radial-gradient(circle,#ee70ff77,transparent 70%);
+    }
+    .poster::after {
+      content: "";
+      position: absolute;
+      inset: 45% 0 0;
+      background: linear-gradient(transparent,#080611e8);
+    }
+    .poster.p2 { background: linear-gradient(150deg,#a44726,#3e142a 60%,#130d1f); }
+    .poster.p3 { background: linear-gradient(150deg,#0b777d,#14253d 60%,#101020); }
+    .poster.p4 { background: linear-gradient(150deg,#6144b4,#20153f 55%,#a82c80); }
+    .poster.p5 { background: linear-gradient(150deg,#ba7130,#3d1b31 60%,#100d1d); }
+    .poster.p6 { background: linear-gradient(150deg,#3355a6,#17132d 60%,#9c367e); }
+    .poster.p7 { background: linear-gradient(150deg,#6b2d4d,#25172e 60%,#a26a24); }
+    .poster.p8 { background: linear-gradient(150deg,#167f84,#10213a 60%,#542ca5); }
+    .poster-title {
+      position: relative;
+      z-index: 1;
+      font-size: clamp(15px,2vw,21px);
+      font-weight: 900;
+      line-height: 1.1;
+      text-transform: uppercase;
+      text-shadow: 0 2px 12px #000;
+    }
+    .free-tag, .price-tag {
+      position: absolute;
+      z-index: 2;
+      top: 9px;
+      left: 9px;
+      padding: 5px 7px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: bold;
+    }
+    .free-tag { background: #00c8a0; color: #071b18; }
+    .price-tag { background: #271637e8; border: 1px solid #b05cf8; }
+    .movie-info { padding: 10px 2px; }
+    .movie-name { font-size: 14px; font-weight: bold; line-height: 1.4; }
+    .movie-meta { font-size: 11px; color: var(--muted); margin-top: 5px; }
+    .empty { display: none; color: var(--muted); padding: 30px 0; }
+    footer {
+      text-align: center;
+      color: #8c819e;
+      padding: 35px 15px 90px;
+      font-size: 12px;
+      border-top: 1px solid #211a30;
+      margin-top: 35px;
+    }
+    .bottom-nav { display: none; }
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #292039;
+      border: 1px solid #7650a5;
+      padding: 13px 18px;
+      border-radius: 12px;
+      display: none;
+      z-index: 20;
+      width: max-content;
+      max-width: 90%;
+      font-size: 13px;
+    }
+    @media(max-width:900px) {
+      .movies { grid-template-columns: repeat(3,minmax(0,1fr)); }
+      .layout { grid-template-columns: 150px minmax(0,1fr); }
+      main { padding: 18px; }
+    }
+    @media(max-width:600px) {
+      header { padding: 12px 14px; gap: 10px; flex-wrap: wrap; }
+      .brand { font-size: 24px; }
+      .search { order: 3; flex-basis: 100%; max-width: none; }
+      .signin { padding: 8px 12px; font-size: 12px; }
+      .layout { display: block; }
+      aside { display: none; }
+      main { padding: 15px 13px 30px; }
+      .hero { min-height: 280px; padding: 22px; }
+      .hero-content { max-width: 100%; }
+      .movies { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px 10px; }
+      .poster { border-radius: 9px; }
+      .section-head { margin-top: 25px; }
+      .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 8;
+        justify-content: space-around;
+        background: #100c1cF5;
+        border-top: 1px solid #342744;
+        padding: 10px 4px calc(10px + env(safe-area-inset-bottom));
+      }
+      .bottom-nav button {
+        border: 0;
+        background: transparent;
+        color: #c7bdd7;
+        font-size: 10px;
+        display: grid;
+        gap: 5px;
+        justify-items: center;
+      }
+      .bottom-nav button span { font-size: 19px; }
+      footer { padding-bottom: 100px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><span>V</span>isplay</div>
+    <form class="search" id="searchForm">
+      <input id="searchInput" placeholder="Search movies and creators..." aria-label="Search movies">
+      <button type="submit">Search</button>
+    </form>
+    <button class="signin" onclick="notify('Account sign-in will be connected to Firebase in our next stage.')">Sign in</button>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <button class="nav-item active" onclick="showAll()">⌂ &nbsp; Home</button>
+      <button class="nav-item" onclick="showAll()">▤ &nbsp; Explore</button>
+      <button class="nav-item" onclick="notify('Your watch history will appear here after we connect accounts.')">◷ &nbsp; History</button>
+      <button class="nav-item" onclick="notify('Your saved movies will appear here after we connect accounts.')">♡ &nbsp; Watchlist</button>
+      <hr style="border-color:#292139;margin:20px 5px">
+      <p style="font-size:11px;color:#9286a5;padding:0 12px">YOUR VISPLAY</p>
+      <button class="nav-item" onclick="notify('Creator applications will be enabled in a later stage.')">＋ &nbsp; Become a creator</button>
+      <button class="nav-item" onclick="notify('Creator subscriptions will notify you of new uploads once accounts are connected.')">♧ &nbsp; Following</button>
+    </aside>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <div class="eyebrow">A new era of African entertainment</div>
+          <h1>Your stories.<br><span class="gradient-text">Your screen.</span></h1>
+          <p class="description">Discover unforgettable movies, support independent filmmakers, and pay only for the stories you want to watch.</p>
+          <div class="actions">
+            <button class="primary" onclick="document.getElementById('moviesSection').scrollIntoView({behavior:'smooth'})">▶ Explore movies</button>
+            <button class="secondary" onclick="notify('Creator registration is coming in the next development stage.')">Become a creator ↗</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-head">
+        <div>
+          <h2>Discover movies</h2>
+          <div class="sub">Big stories. Direct creator support.</div>
+        </div>
+      </div>
+
+      <div class="filters" id="filters">
+        <button class="filter active" data-category="All">All</button>
+        <button class="filter" data-category="Drama">Drama</button>
+        <button class="filter" data-category="Comedy">Comedy</button>
+        <button class="filter" data-category="Action">Action</button>
+        <button class="filter" data-category="Romance">Romance</button>
+        <button class="filter" data-category="Thriller">Thriller</button>
+      </div>
+
+      <section id="moviesSection">
+        <div class="section-head">
+          <h2>Featured for you</h2>
+          <span class="sub">Preview free · Unlock for ₦100</span>
+        </div>
+        <div class="movies" id="movies">
+          <article class="movie" data-category="Drama" data-name="The Last Promise" onclick="openMovie('The Last Promise')">
+            <div class="poster"><span class="free-tag">5 MIN FREE</span><div class="poster-title">The Last Promise</div></div>
+            <div class="movie-info"><div class="movie-name">The Last Promise</div><div class="movie-meta">Drama · 1h 42m</div></div>
+          </article>
+          <article class="movie" data-category="Comedy" data-name="Lagos Wahala" onclick="openMovie('Lagos Wahala')">
+            <div class="poster p2"><span class="price-tag">₦100 to watch</span><div class="poster-title">Lagos Wahala</div></div>
+            <div class="movie-info"><div class="movie-name">Lagos Wahala</div><div class="movie-meta">Comedy · 1h 18m</div></div>
+          </article>
+          <article class="movie" data-category="Action" data-name="Shadow Protocol" onclick="openMovie('Shadow Protocol')">
+            <div class="poster p3"><span class="price-tag">₦100 to watch</span><div class="poster-title">Shadow Protocol</div></div>
+            <div class="movie-info"><div class="movie-name">Shadow Protocol</div><div class="movie-meta">Action · 1h 35m</div></div>
+          </article>
+          <article class="movie" data-category="Romance" data-name="When Hearts Meet" onclick="openMovie('When Hearts Meet')">
+            <div class="poster p4"><span class="price-tag">₦100 to watch</span><div class="poster-title">When Hearts Meet</div></div>
+            <div class="movie-info"><div class="movie-name">When Hearts Meet</div><div class="movie-meta">Romance · 1h 26m</div></div>
+          </article>
+          <article class="movie" data-category="Thriller" data-name="The Silent Witness" onclick="openMovie('The Silent Witness')">
+            <div class="poster p5"><span class="price-tag">₦100 to watch</span><div class="poster-title">The Silent Witness</div></div>
+            <div class="movie-info"><div class="movie-name">The Silent Witness</div><div class="movie-meta">Thriller · 1h 38m</div></div>
+          </article>
+          <article class="movie" data-category="Drama" data-name="Beyond Tomorrow" onclick="openMovie('Beyond Tomorrow')">
+            <div class="poster p6"><span class="price-tag">₦100 to watch</span><div class="poster-title">Beyond Tomorrow</div></div>
+            <div class="movie-info"><div class="movie-name">Beyond Tomorrow</div><div class="movie-meta">Drama · 1h 31m</div></div>
+          </article>
+          <article class="movie" data-category="Comedy" data-name="Roommate Trouble" onclick="openMovie('Roommate Trouble')">
+            <div class="poster p7"><span class="price-tag">₦100 to watch</span><div class="poster-title">Roommate Trouble</div></div>
+            <div class="movie-info"><div class="movie-name">Roommate Trouble</div><div class="movie-meta">Comedy · 1h 12m</div></div>
+          </article>
+          <article class="movie" data-category="Action" data-name="Final Mission" onclick="openMovie('Final Mission')">
+            <div class="poster p8"><span class="price-tag">₦100 to watch</span><div class="poster-title">Final Mission</div></div>
+            <div class="movie-info"><div class="movie-name">Final Mission</div><div class="movie-meta">Action · 1h 44m</div></div>
+          </article>
+        </div>
+        <p id="empty" class="empty">No movies match your search. Try another title or category.</p>
+      </section>
+      <footer>
+        <div class="brand" style="margin-bottom:10px">Visplay</div>
+        Your stories. Your audience. Your earnings.<br><br>
+        © <span id="year"></span> Visplay · Built for storytellers.
+      </footer>
+    </main>
+  </div>
+
+  <nav class="bottom-nav">
+    <button onclick="showAll()"><span>⌂</span>Home</button>
+    <button onclick="document.getElementById('searchInput').focus()"><span>⌕</span>Search</button>
+    <button onclick="notify('Sign in to access your watchlist.')"><span>♡</span>Watchlist</button>
+    <button onclick="notify('Sign in to open your dashboard.')"><span>♙</span>You</button>
+  </nav>
+  <div id="toast" role="status"></div>
+
+  <script>
+    const cards = [...document.querySelectorAll('.movie')];
+    const filters = [...document.querySelectorAll('.filter')];
+    let category = 'All';
+    let searchTerm = '';
+    let toastTimer;
+
+    function notify(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.style.display = 'block';
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.style.display = 'none', 3200);
+    }
+
+    function applyFilters() {
+      let visible = 0;
+      cards.forEach(card => {
+        const matchesCategory = category === 'All' || card.dataset.category === category;
+        const matchesSearch = card.dataset.name.toLowerCase().includes(searchTerm);
+        card.style.display = matchesCategory && matchesSearch ? '' : 'none';
+        if (matchesCategory && matchesSearch) visible++;
+      });
+      document.getElementById('empty').style.display = visible ? 'none' : 'block';
+    }
+
+    filters.forEach(button => {
+      button.addEventListener('click', () => {
+        category = button.dataset.category;
+        filters.forEach(item => item.classList.toggle('active', item === button));
+        applyFilters();
+      });
+    });
+
+    document.getElementById('searchForm').addEventListener('submit', event => {
+      event.preventDefault();
+      searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+      applyFilters();
+      document.getElementById('moviesSection').scrollIntoView({behavior:'smooth'});
+    });
+
+    function openMovie(name) {
+      notify(name + ': movie previews and secure ₦100 unlocking will be connected after backend setup.');
+    }
+
+    function showAll() {
+      category = 'All';
+      searchTerm = '';
+      document.getElementById('searchInput').value = '';
+      filters.forEach(item => item.classList.toggle('active', item.dataset.category === 'All'));
+      applyFilters();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
